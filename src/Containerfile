@@ -1,0 +1,28 @@
+FROM ubuntu:22.04
+
+# Install mullvad vpn.
+COPY mullvad.deb /
+
+# Install base system.
+# Trick mullvad to not require /sbin/init to enable its service.
+# We will run it manually.
+RUN apt-get update && \
+    apt-get install -y curl dbus iproute2 socat && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    ln -s /bin/true /sbin/init && \
+    apt-get install -y /mullvad.deb && \
+    rm -rf /mullvad.deb && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+COPY init_mullvad.sh /
+
+# Area to store configuration. Required for wireguard to work.
+VOLUME /config
+
+# Run with exposing this port for socks proxy.
+EXPOSE 1080
+
+# Run mullvad vpn.
+CMD ["/init_mullvad.sh"]
