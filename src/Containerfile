@@ -4,13 +4,14 @@ FROM ubuntu:22.04
 COPY mullvad.deb /
 
 # Install base system.
-# Trick mullvad to not require /sbin/init to enable its service.
+# Trick mullvad to not require /sbin/init or systemctl to enable its service.
 # We will run it manually.
 RUN apt-get update && \
     apt-get install -y curl dbus iproute2 socat && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     ln -s /bin/true /sbin/init && \
+    ln -s /bin/true /usr/bin/systemctl && \
     apt-get install -y /mullvad.deb && \
     rm -rf /mullvad.deb && \
     apt-get clean && \
