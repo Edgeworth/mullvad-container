@@ -4,17 +4,17 @@ set -xe
 
 echo "Running daemon"
 export MULLVAD_SETTINGS_DIR=/config
-/opt/Mullvad\ VPN/resources/mullvad-daemon -v &
+/usr/bin/mullvad-daemon -v &
 
 # Sleep for a bit to let the daemon start up
 sleep 5
 mullvad relay set tunnel-protocol wireguard
-mullvad always-require-vpn set on
+mullvad lockdown-mode set on
 mullvad lan set allow
 mullvad auto-connect set on
 
 echo "Using ID: $MULLVAD_ID, country: $MULLVAD_COUNTRY, city: $MULLVAD_CITY"
-mullvad account set $MULLVAD_ID  && \
+mullvad account login $MULLVAD_ID  && \
 mullvad relay set location $MULLVAD_COUNTRY $MULLVAD_CITY && \
 mullvad connect
 

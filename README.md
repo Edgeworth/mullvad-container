@@ -7,3 +7,9 @@ Put a env file named .mullvad_id here like:
 `MULLVAD_ID=<your mullvad id>`
 
 Connect to the socks proxy at `socks5://127.0.0.1:42691`
+
+You can test the socks proxy is working using curl:
+
+```sh
+curl -x socks5://127.0.0.1:42691 https://www.google.com
+```

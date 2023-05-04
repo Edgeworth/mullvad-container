@@ -15,7 +15,7 @@ run country="us" city="" ip="10.88.0.42" *args="":
     mullvad-container
 
 shell:
-  sudo podman run -it /bin/bash src
+  sudo podman run -it mullvad-container /bin/bash
 
 update-mullvad:
   rm src/mullvad.deb
