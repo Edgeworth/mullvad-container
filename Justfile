@@ -4,9 +4,6 @@ alias b := build
 default:
   @just --list
 
-build:
-  sudo podman build -t mullvad-container src
-
 run country="us" city="" ip="10.88.0.42" *args="":
   # Run as privileged. Expose the socks proxy 10.64.0.1:1080 at 42691.
   sudo podman run --env MULLVAD_COUNTRY={{country}} --env MULLVAD_CITY={{city}} \
@@ -14,8 +11,15 @@ run country="us" city="" ip="10.88.0.42" *args="":
     --ip {{ip}} -ti  \
     mullvad-container
 
+build:
+  sudo podman build -t mullvad-container src
+
 shell:
   sudo podman run -it mullvad-container /bin/bash
+
+remove-all-podman:
+  sudo podman rm -a
+  sudo podman rmi -a
 
 update-mullvad:
   rm src/mullvad.deb
