@@ -5,13 +5,17 @@ default:
   @just --list
 
 run country="us" city="" ip="10.88.0.42" *args="":
-  # Run as privileged. Expose the socks proxy 10.64.0.1:1080 at 42691.
-  sudo podman run --env MULLVAD_COUNTRY={{country}} --env MULLVAD_CITY={{city}} \
+  sh -c "sleep 10; sudo podman exec -it mullvad-container-instance mullvad reconnect" &
+  sudo podman run -ti --env MULLVAD_COUNTRY={{country}} --env MULLVAD_CITY={{city}} \
     --env-file .mullvad_id --privileged -p 42691:1080 -v mullvad_config:/config \
-    --ip {{ip}} --replace --name mullvad-container-instance -ti mullvad-container
-  sleep 2
+    --ip {{ip}} --replace --name mullvad-container-instance mullvad-container
+
+connect:
   # Make sure connection works.
   sudo podman exec -it mullvad-container-instance mullvad connect
+
+reconnect:
+  sudo podman exec -it mullvad-container-instance mullvad reconnect
 
 build:
   sudo podman build -t mullvad-container src
@@ -23,6 +27,6 @@ remove-all-podman:
   sudo podman rm -a
   sudo podman rmi -a
 
-update-mullvad:
-  rm src/mullvad.deb
+update:
+  rm -f src/mullvad.deb
   curl -L -o src/mullvad.deb https://mullvad.net/download/app/deb/latest
